@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>String Algorithm Visualization</title>
+        <link rel="stylesheet" href="./style/style.css">
+    </head>
+    <body>
+        <div class="app">
+            <div class="container">
+                <div class="container__input">
+                    <label for="str">String: </label>
+                    <input id="str" type="text" />
+                </div>
+                <div class="container__input">
+                    <label for="pattern">Pattern: </label>
+                    <input id="pattern" type="text" onkeyup="debounce(onPatternKeyup(event), 1000)" />
+                </div>
+                <div class="container__visualization">
+                    <div id="strContainer"></div>
+                    <div id="patternContainer"></div>
+                </div>
+            </div>
+        </div>
+        <script src="./script/init.js"></script>
+    </body>
+</html>
