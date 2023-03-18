@@ -33,7 +33,7 @@ function searchByBruteForce(str, pattern) {
  * @returns {boolean} return true if pattern is found in str 
  */
 function searchByKMP(str, pattern) {
-    function createTable(s, sLen) {
+    const createTable = (s, sLen) => {
         const table = Array(sLen).fill(0);
 
         for (let i = 1, j = 0; i < sLen; i++) {
@@ -49,17 +49,18 @@ function searchByKMP(str, pattern) {
         return table;
     }
 
-    const strLen = str.length;
-    const patternLen = pattern.length;
+    const strLength = str.length;
+    const patternLength = pattern.length;
+    const patternLastIndex = patternLength - 1;
 
-    const table = createTable(pattern, patternLen);
-    for (let i = 0, j = 0; i < strLen; i++) {
+    const table = createTable(pattern, patternLength);
+    for (let i = 0, j = 0; i < strLength; i++) {
         while (j > 0 && str[i] !== pattern[j]) {
             j = table[j - 1];
         }
 
         if (str[i] === pattern[j]) {
-            if (j === patternLen - 1) {
+            if (j === patternLastIndex) {
                 return true;
             }
             else {

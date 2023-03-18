@@ -9,17 +9,52 @@
     <body>
         <div class="app">
             <div class="container">
-                <div class="container__input">
-                    <label for="str">String: </label>
-                    <input id="str" type="text" />
+                <div class="base input-container">
+                    <div class="textbox">
+                        <input id="str" type="text" placeholder="Enter string" />
+                    </div>
+                    <div class="textbox">
+                        <input id="pattern" type="text" placeholder="Enter pattern" />
+                    </div>
                 </div>
-                <div class="container__input">
-                    <label for="pattern">Pattern: </label>
-                    <input id="pattern" type="text" onkeyup="debounce(onPatternKeyup(event), 1000)" />
+                <div class="base action-container">
+                    <select>
+                        <option>Select algorithm</option>
+                        <option>Brute force</option>
+                        <option>KMP</option>
+                        <option>Boyer Moore</option>
+                    </select>
+                    <div>
+                        <button type="button">Draw</button>
+                        <button type="button">Compare</button>    
+                    </div>
                 </div>
-                <div class="container__visualization">
-                    <div id="strContainer"></div>
-                    <div id="patternContainer"></div>
+                <div class="base dom-container">
+                    <div class="visualization-container">
+                        <div id="strContainer">
+                            <div class="item-container">
+                                <div class="item-box">
+                                    p
+                                </div>
+                                <div class="item-box">
+                                    p
+                                </div>
+                                <div class="item-box">
+                                    p
+                                </div>
+                                <div class="item-box">
+                                    p
+                                </div>
+                                <div class="item-box">
+                                    p
+                                </div>
+                                <div class="item-box">
+                                    p
+                                </div>
+                            </div>    
+                        </div>
+                        <div id="patternContainer" class="visualization-container"></div>
+                    </div>
                 </div>
             </div>
         </div>
