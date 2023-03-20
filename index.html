@@ -25,35 +25,24 @@
                         <option>Boyer Moore</option>
                     </select>
                     <div>
-                        <button type="button">Draw</button>
-                        <button type="button">Compare</button>    
+                        <button id="btnToDraw" type="button">Draw</button>
+                        <button id="btnToCompare" type="button">Compare</button>    
                     </div>
                 </div>
                 <div class="base dom-container">
                     <div class="visualization-container">
-                        <div id="strContainer">
-                            <div class="item-container">
-                                <div class="item-box">
-                                    p
-                                </div>
-                                <div class="item-box">
-                                    p
-                                </div>
-                                <div class="item-box">
-                                    p
-                                </div>
-                                <div class="item-box">
-                                    p
-                                </div>
-                                <div class="item-box">
-                                    p
-                                </div>
-                                <div class="item-box">
-                                    p
-                                </div>
-                            </div>    
-                        </div>
-                        <div id="patternContainer" class="visualization-container"></div>
+                        <div id="strContainer"></div>
+                        <div id="patternContainer"></div>
+                    </div>
+                </div>
+                <div class="base performance-container">
+                    <div>
+                        <span>Operation: </span>
+                        <span id="operation"></span>
+                    </div>
+                    <div>
+                        <span>Memory: </span>
+                        <span id="memory"></span>
                     </div>
                 </div>
             </div>

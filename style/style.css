@@ -18,7 +18,7 @@ body {
 
 .container {
     width: max(25%, 500px);
-    height: max(25%, 350px);
+    height: max(25%, 390px);
     border: 1px solid #000;
     position: absolute;
     top: 0;
@@ -33,12 +33,9 @@ body {
     margin-bottom: 10px;
 }
 
-.input-container {
-    display: flex;
-    justify-content: space-between;
-}
-
-.action-container {
+.input-container,
+.action-container,
+.performance-container {
     display: flex;
     justify-content: space-between;
 }
@@ -48,15 +45,29 @@ body {
     overflow: auto hidden;
 }
 
-.item-container {
+.visualization-container * {
+    margin-bottom: 5px;
+}
+
+.item-container {   
     display: inline-flex;
 }
 
 .item-box {
-    display: inline-block;
-    width: 100px;
-    height: 100px;
+    display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid #000;
+    width: 100px;
+    height: 100px;
+    border-color: #000;
+    border-width: 1px 0 1px 1px;
+    border-style: solid;
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+    font-family: sans-serif;
+}
+
+.item-box:last-child {
+    border-right-width: 1px;
 }
