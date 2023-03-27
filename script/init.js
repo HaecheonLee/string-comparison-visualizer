@@ -3,23 +3,74 @@
 }());
 
 function init() {
-    initializeButton("btnToDraw", draw);
-    initializeButton("btnToCompare", null)
+    initializeDOM("btnToDraw", draw, "onclick");
+    initializeDOM("btnToCompare", compare, "onclick");
+    initializeDOM("algorithmList", onAlgorithmChange, "onchange");
+
+    onAlgorithmChange();
 }
 
-function initializeButton(buttonId, onClick) {
+function initializeDOM(domId, fn, event) {
+    const dom = document.getElementById(domId);
+
+    if(!dom) {
+        return;
+    }
+
+    switch (event) {
+        case "onclick":
+            dom.onclick = fn;
+            break;
+        case "onchange":
+            dom.onchange = fn;
+            break;
+    }
+}
+
+function compare() {
+    const selectedValue = getAlgorithmListSelectedValue();
+
+    if (selectedValue === null || selectedValue === undefined) {
+        return;
+    }
+
+    switch(selectedValue) {
+        case "1":
+            break;
+        case "2":
+            break;
+        case "3":
+            break;
+    }
+}
+
+function draw() {
+    const isStrLengthLongerOrEqualToPatternLength = validateIfStrLengthLongerOrEqualToPatternLength();
+
+    if (!isStrLengthLongerOrEqualToPatternLength) {
+        alert("The string's length must be longer or equal to the pattern's length")
+        return;
+    }
+
+    drawDOM("str", "strContainer");
+    drawDOM("pattern", "patternContainer");
+}
+
+function onAlgorithmChange() {
+    const selectedValue = getAlgorithmListSelectedValue();
+    const shouldDisable = selectedValue === "0";
+
+    toggleButton("btnToCompare", shouldDisable);
+}
+
+function toggleButton(buttonId, shouldDisable) {
     const button = document.getElementById(buttonId);
 
     if(!button) {
         return;
     }
 
-    button.onclick = onClick;
-}
-
-function draw() {
-    drawDOM("str", "strContainer");
-    drawDOM("pattern", "patternContainer");
+    button.disabled = shouldDisable;
 }
 
 function drawDOM(inputId, containerId) {
@@ -32,12 +83,12 @@ function drawDOM(inputId, containerId) {
 
     const { value: inputValue } = input;
 
-    if (!inputValue) {
+    if (inputValue === null || inputValue === undefined) {
         return;
     }
-
-    removeChildElements(container);
+    
     const itemContainer = makeItemContainer(inputValue);
+    removeChildElements(container);
     container.appendChild(itemContainer);
 }
 
@@ -49,7 +100,7 @@ function removeChildElements(container) {
     while (container.firstChild) {
         container.removeChild(container.lastChild);
     }
-}
+}   
 
 function makeItemContainer(str) {
     const itemContainer = document.createElement("div");
@@ -70,4 +121,24 @@ function makeItemBox(textValue) {
     item.append(textValue);
 
     return item;
+}
+
+function validateIfStrLengthLongerOrEqualToPatternLength() {
+    const str = document.getElementById("str");
+    const pattern = document.getElementById("pattern");
+
+    const strValue = str.value;
+    const patternValue = pattern.value;
+
+    return strValue.length >= patternValue.length;
+}
+
+function getAlgorithmListSelectedValue() {
+    const algorithmList = document.getElementById("algorithmList");
+    
+    if (!algorithmList) {
+        return null;
+    }
+
+    return algorithmList.value;
 }

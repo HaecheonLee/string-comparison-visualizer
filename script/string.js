@@ -2,9 +2,10 @@
  * Search a string by brute-force
  * @param {string} str 
  * @param {string} pattern 
- * @returns {boolean} return true if pattern is found in str
+ * @param {function} fn 
+ * @returns {boolean} return true if the pattern is found in str
  */
-function searchByBruteForce(str, pattern) {
+function searchByBruteForce(str, pattern, fn) {
     const strLen = str.length;
     const patternLen = pattern.length;
     const totalLengthToIterate = strLen - patternLen;
@@ -30,9 +31,10 @@ function searchByBruteForce(str, pattern) {
  * Search a string by KMP
  * @param {string} str 
  * @param {string} pattern
- * @returns {boolean} return true if pattern is found in str 
+ * @param {function} fn 
+ * @returns {boolean} return true if the pattern is found in str 
  */
-function searchByKMP(str, pattern) {
+function searchByKMP(str, pattern, fn) {
     const createTable = (s, sLen) => {
         const table = Array(sLen).fill(0);
 

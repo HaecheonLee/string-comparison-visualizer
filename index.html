@@ -18,11 +18,11 @@
                     </div>
                 </div>
                 <div class="base action-container">
-                    <select>
-                        <option>Select algorithm</option>
-                        <option>Brute force</option>
-                        <option>KMP</option>
-                        <option>Boyer Moore</option>
+                    <select id="algorithmList">
+                        <option value="0">Select algorithm</option>
+                        <option value="1">Brute force</option>
+                        <option value="2">KMP</option>
+                        <option value="3">Boyer Moore</option>
                     </select>
                     <div>
                         <button id="btnToDraw" type="button">Draw</button>
@@ -47,6 +47,8 @@
                 </div>
             </div>
         </div>
+
+        <script src="./script/string.js"></script>
         <script src="./script/init.js"></script>
     </body>
 </html>
