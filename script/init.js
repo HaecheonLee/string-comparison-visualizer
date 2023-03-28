@@ -46,7 +46,6 @@ async function compare() {
     }
 
     resetBeforeCompare();
-    measureMemoryUsage();
     switch(selectedValue) {
         case "1":
             await runBruteForce();
@@ -54,9 +53,7 @@ async function compare() {
         case "2":
             break;
     }
-    measureMemoryUsage();
     setOperation(operations);
-    // setMemory(endMemory - startMemory);
 }
 
 function draw() {
@@ -224,11 +221,6 @@ function setOperation(text) {
     operationDOM.textContent = text;
 }
 
-function setMemory(text) {
-    const memoryDOM = document.getElementById("memory");
-    memoryDOM.textContent = text;
-}
-
 function resetBackground() {
     const strItemboxes = document.querySelectorAll('#strContainer .item-box');
     const patternItemboxes = document.querySelectorAll('#patternContainer .item-box');
@@ -257,7 +249,6 @@ function resetBeforeCompare() {
     resetBackground();
     resetMargin();
     setOperation("calculating...");
-    setMemory("calculating...");
 }
 
 function enableOrDisableAllElements(shouldEnable) {
@@ -273,18 +264,3 @@ function enableOrDisableAllElements(shouldEnable) {
         element.disabled = shouldEnable;
     }
 }
-
-function measureMemoryUsage() {
-    // Get the initial memory usage
-    const startMemory = performance.memory.usedJSHeapSize;
-  
-    // Your function code goes here...
-  
-    // Get the final memory usage
-    const endMemory = performance.memory.usedJSHeapSize;
-  
-    // Calculate the difference
-    const memoryUsage = endMemory - startMemory;
-  
-    console.log(`Memory used: ${memoryUsage} bytes`);
-}  
