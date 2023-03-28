@@ -95,7 +95,7 @@ function drawDOM(inputId, containerId) {
 
     const { value: inputValue } = input;
 
-    if (inputValue === null || inputValue === undefined) {
+    if (!inputValue) {
         return;
     }
     
