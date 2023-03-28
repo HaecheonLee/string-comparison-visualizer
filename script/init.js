@@ -2,6 +2,8 @@
     init();
 }());
 
+const timer = ms => new Promise(res => setTimeout(res, ms));
+
 function init() {
     initializeDOM("btnToDraw", draw, "onclick");
     initializeDOM("btnToCompare", compare, "onclick");
@@ -27,21 +29,34 @@ function initializeDOM(domId, fn, event) {
     }
 }
 
-function compare() {
+async function compare() {
     const selectedValue = getAlgorithmListSelectedValue();
 
     if (selectedValue === null || selectedValue === undefined) {
+        alert("Choose an algorithm from the list");
         return;
     }
 
+    const strItemContainer = document.querySelector("#strContainer .item-container");
+    const patternItemContainer = document.querySelector("#patternContainer .item-container");
+
+    if (!strItemContainer || !patternItemContainer) {
+        alert("Must draw first");
+        return;
+    }
+
+    resetBeforeCompare();
+    measureMemoryUsage();
     switch(selectedValue) {
         case "1":
+            await runBruteForce();
             break;
         case "2":
             break;
-        case "3":
-            break;
     }
+    measureMemoryUsage();
+    setOperation(operations);
+    // setMemory(endMemory - startMemory);
 }
 
 function draw() {
@@ -60,17 +75,17 @@ function onAlgorithmChange() {
     const selectedValue = getAlgorithmListSelectedValue();
     const shouldDisable = selectedValue === "0";
 
-    toggleButton("btnToCompare", shouldDisable);
+    enableOrDisableElement("btnToCompare", shouldDisable);
 }
 
-function toggleButton(buttonId, shouldDisable) {
-    const button = document.getElementById(buttonId);
+function enableOrDisableElement(elementId, shouldDisable) {
+    const element = document.getElementById(elementId);
 
-    if(!button) {
+    if(!element) {
         return;
     }
 
-    button.disabled = shouldDisable;
+    element.disabled = shouldDisable;
 }
 
 function drawDOM(inputId, containerId) {
@@ -142,3 +157,134 @@ function getAlgorithmListSelectedValue() {
 
     return algorithmList.value;
 }
+
+async function runBruteForce() {
+    enableOrDisableElement("btnToDraw", true);
+    enableOrDisableElement("btnToCompare", true);
+    enableOrDisableElement()
+    const str = document.getElementById("str")
+    const pattern = document.getElementById("pattern");
+    let currentJump = 0;
+
+    const isFound = await searchByBruteForce(str.value, pattern.value, (strIndex, patternIndex, jump, isEqual) => {
+        if (currentJump !== jump) {
+            moveDOM(jump);
+            currentJump = jump;
+        }
+        paintDOM(strIndex, patternIndex, isEqual);
+    });
+
+    enableOrDisableElement("btnToDraw", false);
+    enableOrDisableElement("btnToCompare", false);
+}
+
+async function paintDOM(currentStrIndex, currentPatternIndex, isEqual) {
+    const strItemContainer = document.querySelector("#strContainer .item-container");
+    const patternItemContainer = document.querySelector("#patternContainer .item-container");
+
+    if (!strItemContainer || !patternItemContainer) {
+        alert("One of containers does not have an item container.");
+        return;
+    }
+
+    const strItembox = strItemContainer.querySelector(`.item-box:nth-child(${currentStrIndex + 1})`);
+    const patternItembox = patternItemContainer.querySelector(`.item-box:nth-child(${currentPatternIndex + 1})`);
+    
+    if (isEqual) {
+        const colorGreen = "green";
+
+        strItembox.style.backgroundColor = colorGreen;
+        patternItembox.style.backgroundColor = colorGreen;
+
+        await timer(WAIT_TIME);
+    } else {
+        const colorRed = "red";
+        strItembox.style.backgroundColor = colorRed;
+        patternItembox.style.backgroundColor = colorRed;
+
+        await timer(WAIT_TIME);
+
+        resetBackground();
+    }
+}
+
+async function moveDOM(jump) {
+    const patternItemContainer = document.querySelector("#patternContainer .item-container");
+
+    if (!patternItemContainer) {
+        return;
+    }
+
+    patternItemContainer.style.marginLeft = `${100 * jump}px`;
+    await timer(WAIT_TIME);
+}
+
+function setOperation(text) {
+    const operationDOM = document.getElementById("operation");
+    operationDOM.textContent = text;
+}
+
+function setMemory(text) {
+    const memoryDOM = document.getElementById("memory");
+    memoryDOM.textContent = text;
+}
+
+function resetBackground() {
+    const strItemboxes = document.querySelectorAll('#strContainer .item-box');
+    const patternItemboxes = document.querySelectorAll('#patternContainer .item-box');
+
+    if (!strItemboxes || !patternItemboxes) {
+        return;
+    }
+
+    strItemboxes.forEach(p => p.style.backgroundColor = "");
+    patternItemboxes.forEach(p => p.style.backgroundColor = "");
+}
+
+function resetMargin() {
+    const patternItemContainer = document.querySelector("#patternContainer .item-container");
+
+    if (!patternItemContainer) {
+        return;
+    }
+
+    patternItemContainer.style.marginLeft = "";
+}
+
+function resetBeforeCompare() {
+    operations = 0;
+    enableOrDisableAllElements(false);
+    resetBackground();
+    resetMargin();
+    setOperation("calculating...");
+    setMemory("calculating...");
+}
+
+function enableOrDisableAllElements(shouldEnable) {
+    const idList = ["algorithmList", "btnToDraw", "btnToCompare"];
+
+    for (const id of idList) {
+        const element = document.getElementById(id);
+
+        if (!element) {
+            continue;
+        }
+
+        element.disabled = shouldEnable;
+    }
+}
+
+function measureMemoryUsage() {
+    // Get the initial memory usage
+    const startMemory = performance.memory.usedJSHeapSize;
+  
+    // Your function code goes here...
+  
+    // Get the final memory usage
+    const endMemory = performance.memory.usedJSHeapSize;
+  
+    // Calculate the difference
+    const memoryUsage = endMemory - startMemory;
+  
+    console.log(`Memory used: ${memoryUsage} bytes`);
+}  

@@ -45,12 +45,13 @@ body {
     overflow: auto hidden;
 }
 
-.visualization-container * {
+.visualization-container > div {
     margin-bottom: 5px;
 }
 
 .item-container {   
     display: inline-flex;
+    transition: all 0.2s ease-in-out;
 }
 
 .item-box {
@@ -66,6 +67,7 @@ body {
     font-weight: bold;
     text-align: center;
     font-family: sans-serif;
+    transition: all 0.2s ease-in-out;
 }
 
 .item-box:last-child {
