@@ -71,12 +71,15 @@ async function searchByKMP(str, pattern, fn) {
     const patternLastIndex = patternLength - 1;
 
     const table = createTable(pattern, patternLength);
+    let jump = 0;
     for (let i = 0, j = 0; i < strLength; i++) {
         operations += 1;
         while (j > 0 && str[i] !== pattern[j]) {
             operations += 1;
             j = table[j - 1];
         }
+
+        console.log(i, j);
 
         if (str[i] === pattern[j]) {
             if (j === patternLastIndex) {

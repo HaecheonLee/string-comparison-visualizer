@@ -73,3 +73,7 @@ body {
 .item-box:last-child {
     border-right-width: 1px;
 }
+
+.result-text {
+    font-weight: bold;
+}

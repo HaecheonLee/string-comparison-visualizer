@@ -5,7 +5,6 @@
 const timer = ms => new Promise(res => setTimeout(res, ms));
 
 function init() {
-    initializeDOM("btnToDraw", draw, "onclick");
     initializeDOM("btnToCompare", compare, "onclick");
     initializeDOM("algorithmList", onAlgorithmChange, "onchange");
 
@@ -37,11 +36,14 @@ async function compare() {
         return;
     }
 
+    removeItemContainer()
+    draw();
+
     const strItemContainer = document.querySelector("#strContainer .item-container");
     const patternItemContainer = document.querySelector("#patternContainer .item-container");
 
     if (!strItemContainer || !patternItemContainer) {
-        alert("Must draw first");
+        alert("Enter valid string");
         return;
     }
 
@@ -51,10 +53,24 @@ async function compare() {
             await runBruteForce();
             break;
         case "2":
+            await runKMP();
             break;
     }
     enableOrDisableAllElements(false);
     setOperation(operations);
+}
+
+function removeItemContainer() {
+    const strContainer = document.querySelector("#strContainer");
+    const patternContainer = document.querySelector("#patternContainer");
+
+    if (strContainer) {
+        removeChildElements(strContainer);
+    }
+
+    if (patternContainer) {
+        removeChildElements(patternContainer);
+    }
 }
 
 function draw() {
@@ -157,9 +173,6 @@ function getAlgorithmListSelectedValue() {
 }
 
 async function runBruteForce() {
-    enableOrDisableElement("btnToDraw", true);
-    enableOrDisableElement("btnToCompare", true);
-    enableOrDisableElement()
     const str = document.getElementById("str")
     const pattern = document.getElementById("pattern");
     let currentJump = 0;
@@ -172,8 +185,23 @@ async function runBruteForce() {
         paintDOM(strIndex, patternIndex, isEqual);
     });
 
-    enableOrDisableElement("btnToDraw", false);
-    enableOrDisableElement("btnToCompare", false);
+    setResult(getResult(isFound));
+}
+
+async function runKMP() {
+    const str = document.getElementById("str")
+    const pattern = document.getElementById("pattern");
+    let currentJump = 0;
+
+    const isFound = await searchByKMP(str.value, pattern.value, (strIndex, patternIndex, jump, isEqual) => {
+        if (currentJump !== jump) {
+            moveDOM(jump);
+            currentJump = jump;
+        }
+        paintDOM(strIndex, patternIndex, isEqual);
+    });
+
+    setResult(getResult(isFound));
 }
 
 async function paintDOM(currentStrIndex, currentPatternIndex, isEqual) {
@@ -222,6 +250,19 @@ function setOperation(text) {
     operationDOM.textContent = text;
 }
 
+function setResult(result) {
+    const resultDOM = document.getElementById("result");
+    resultDOM.textContent = result;
+}
+
+function getResult(result) {
+    if (result) {
+        return "Found";
+    }
+
+    return "Not Found";
+}
+
 function resetBackground() {
     const strItemboxes = document.querySelectorAll('#strContainer .item-box');
     const patternItemboxes = document.querySelectorAll('#patternContainer .item-box');
@@ -250,14 +291,15 @@ function resetBeforeCompare() {
     resetBackground();
     resetMargin();
     setOperation("calculating...");
+    setResult("running...");
 }
 
 function enableOrDisableAllElements(shouldEnable) {
-    const idList = ["str", "pattern", "algorithmList", "btnToDraw", "btnToCompare"];
+    const idList = ["str", "pattern", "algorithmList", "btnToCompare"];
 
     for (const id of idList) {
         const element = document.getElementById(id);
-        console.log(element);
+
         if (!element) {
             continue;
         }
