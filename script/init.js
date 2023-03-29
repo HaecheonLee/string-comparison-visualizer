@@ -37,7 +37,11 @@ async function compare() {
     }
 
     removeItemContainer()
-    draw();
+    const isDrawingSuccessful = draw();
+
+    if (!isDrawingSuccessful) {
+        return;
+    }
 
     const strItemContainer = document.querySelector("#strContainer .item-container");
     const patternItemContainer = document.querySelector("#patternContainer .item-container");
@@ -78,11 +82,13 @@ function draw() {
 
     if (!isStrLengthLongerOrEqualToPatternLength) {
         alert("The string's length must be longer or equal to the pattern's length")
-        return;
+        return false;;
     }
 
     drawDOM("str", "strContainer");
     drawDOM("pattern", "patternContainer");
+
+    return true;
 }
 
 function onAlgorithmChange() {
