@@ -53,6 +53,7 @@ async function compare() {
         case "2":
             break;
     }
+    enableOrDisableAllElements(false);
     setOperation(operations);
 }
 
@@ -193,13 +194,13 @@ async function paintDOM(currentStrIndex, currentPatternIndex, isEqual) {
         strItembox.style.backgroundColor = colorGreen;
         patternItembox.style.backgroundColor = colorGreen;
 
-        await timer(WAIT_TIME);
+        await timer(WAIT_TIME / 3);
     } else {
         const colorRed = "red";
         strItembox.style.backgroundColor = colorRed;
         patternItembox.style.backgroundColor = colorRed;
 
-        await timer(WAIT_TIME);
+        await timer(WAIT_TIME / 3);
 
         resetBackground();
     }
@@ -213,7 +214,7 @@ async function moveDOM(jump) {
     }
 
     patternItemContainer.style.marginLeft = `${100 * jump}px`;
-    await timer(WAIT_TIME);
+    await timer(WAIT_TIME / 3);
 }
 
 function setOperation(text) {
@@ -245,18 +246,18 @@ function resetMargin() {
 
 function resetBeforeCompare() {
     operations = 0;
-    enableOrDisableAllElements(false);
+    enableOrDisableAllElements(true);
     resetBackground();
     resetMargin();
     setOperation("calculating...");
 }
 
 function enableOrDisableAllElements(shouldEnable) {
-    const idList = ["algorithmList", "btnToDraw", "btnToCompare"];
+    const idList = ["str", "pattern", "algorithmList", "btnToDraw", "btnToCompare"];
 
     for (const id of idList) {
         const element = document.getElementById(id);
-
+        console.log(element);
         if (!element) {
             continue;
         }
