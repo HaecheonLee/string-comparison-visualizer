@@ -19,7 +19,7 @@ async function searchByBruteForce(str, pattern, fn) {
             operations += 1;
             const isEqual = str[i + j] === pattern[j];
 
-            fn(i + j, j, jump, isEqual);
+            await fn(i + j, j, jump, isEqual);
 
             if(!isEqual) {
                 isFound = false;
@@ -49,18 +49,20 @@ async function searchByBruteForce(str, pattern, fn) {
  */
 async function searchByKMP(str, pattern, fn) {
     const createTable = (s, sLen) => {
-        const table = Array(sLen).fill(0);
+        operations += sLen;
+        
+        const table = Array(sLen).fill(-1);
 
-        for (let i = 1, j = 0; i < sLen; i++) {
+        for (let i = 1; i < sLen; i++) {
             operations += 1;
-            while (j > 0 && s[j] !== s[i]) {
-                operations += 1;
-                j = table[j];
-            }
-
-            if (s[j] === s[i]) {
-                table[i + 1] = ++j;
-            }
+            
+            const idx = 1 + table[i - 1];
+            
+            if(s[i] === s[idx]){
+                table[i] = idx;
+            } else{
+                table[i] = -1
+            }  
         }
 
         return table;
@@ -68,30 +70,29 @@ async function searchByKMP(str, pattern, fn) {
 
     const strLength = str.length;
     const patternLength = pattern.length;
-    const patternLastIndex = patternLength - 1;
 
     const table = createTable(pattern, patternLength);
-    let jump = 0;
-    for (let i = 0, j = 0; i < strLength; i++) {
+    let i = 0, j = 0, jump = 0;
+    while (i < strLength && j < patternLength) {
         operations += 1;
-        while (j > 0 && str[i] !== pattern[j]) {
-            operations += 1;
-            j = table[j - 1];
-        }
-
-        console.log(i, j);
 
         if (str[i] === pattern[j]) {
-            if (j === patternLastIndex) {
-                return true;
-            }
-            else {
-                j++;
-            }
+            await fn(i, j, jump, true);
+            i++;
+            j++;
+        } else if (j === 0) {
+            await fn(i, j, jump + 1, false);
+            i++;
+            jump++;
+        } else {
+            const k = 1 + table[j - 1];
+            await fn(i, j, i - k, false);
+            j = k;
+            jump = i - k;
         }
 
         await timer(WAIT_TIME);
     }
 
-    return false;
+    return j === patternLength;
 }

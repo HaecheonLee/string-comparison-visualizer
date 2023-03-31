@@ -5,13 +5,13 @@
 const timer = ms => new Promise(res => setTimeout(res, ms));
 
 function init() {
-    initializeDOM("btnToCompare", compare, "onclick");
-    initializeDOM("algorithmList", onAlgorithmChange, "onchange");
+    initializeDom("btnToCompare", compare, "onclick");
+    initializeDom("algorithmList", onAlgorithmChange, "onchange");
 
     onAlgorithmChange();
 }
 
-function initializeDOM(domId, fn, event) {
+function initializeDom(domId, fn, event) {
     const dom = document.getElementById(domId);
 
     if(!dom) {
@@ -85,8 +85,8 @@ function draw() {
         return false;;
     }
 
-    drawDOM("str", "strContainer");
-    drawDOM("pattern", "patternContainer");
+    drawDom("str", "strContainer");
+    drawDom("pattern", "patternContainer");
 
     return true;
 }
@@ -108,7 +108,7 @@ function enableOrDisableElement(elementId, shouldDisable) {
     element.disabled = shouldDisable;
 }
 
-function drawDOM(inputId, containerId) {
+function drawDom(inputId, containerId) {
     const input = document.getElementById(inputId);
     const container = document.getElementById(containerId);
 
@@ -179,68 +179,91 @@ function getAlgorithmListSelectedValue() {
 }
 
 async function runBruteForce() {
-    const str = document.getElementById("str")
-    const pattern = document.getElementById("pattern");
+    const str = document.getElementById("str").value
+    const pattern = document.getElementById("pattern").value;
     let currentJump = 0;
 
-    const isFound = await searchByBruteForce(str.value, pattern.value, (strIndex, patternIndex, jump, isEqual) => {
+    const isFound = await searchByBruteForce(str, pattern, async (strIndex, patternIndex, jump, isEqual) => {
         if (currentJump !== jump) {
-            moveDOM(jump);
+            resetAllBackgronud(str.length, pattern.length);
+
+            await timer(WAIT_TIME / 4);
+
+            moveDom(jump);
             currentJump = jump;
         }
-        paintDOM(strIndex, patternIndex, isEqual);
+
+        await timer(WAIT_TIME / 4);
+        paintItemContainer(strIndex, patternIndex, isEqual);
     });
 
     setResult(getResult(isFound));
 }
 
 async function runKMP() {
-    const str = document.getElementById("str")
-    const pattern = document.getElementById("pattern");
+    const str = document.getElementById("str").value;
+    const pattern = document.getElementById("pattern").value;
     let currentJump = 0;
 
-    const isFound = await searchByKMP(str.value, pattern.value, (strIndex, patternIndex, jump, isEqual) => {
+    const isFound = await searchByKMP(str, pattern, async (strIndex, patternIndex, jump, isEqual) => {
+        paintItemContainer(strIndex, patternIndex, isEqual);
+    
+        await timer(WAIT_TIME / 4);
+
         if (currentJump !== jump) {
-            moveDOM(jump);
+            resetAllBackgronud(str.length, pattern.length);
+            
+            await timer(WAIT_TIME / 4);
+
+            moveDom(jump);
+
+            const nextPatternIndex = patternIndex - (jump - currentJump);
+            paintDomFromStartToEnd("#strContainer .item-container", strIndex - nextPatternIndex, strIndex - 1, true);
+            paintDomFromStartToEnd("#patternContainer .item-container", 0, nextPatternIndex - 1, true);
             currentJump = jump;
         }
-        paintDOM(strIndex, patternIndex, isEqual);
     });
 
     setResult(getResult(isFound));
 }
 
-async function paintDOM(currentStrIndex, currentPatternIndex, isEqual) {
-    const strItemContainer = document.querySelector("#strContainer .item-container");
-    const patternItemContainer = document.querySelector("#patternContainer .item-container");
+function resetAllBackgronud(strLength, patternLength) {
+    resetBackground("#strContainer .item-box", 0, strLength);
+    resetBackground("#patternContainer .item-box", 0, patternLength);
+}
 
-    if (!strItemContainer || !patternItemContainer) {
-        alert("One of containers does not have an item container.");
-        return;
-    }
-
-    const strItembox = strItemContainer.querySelector(`.item-box:nth-child(${currentStrIndex + 1})`);
-    const patternItembox = patternItemContainer.querySelector(`.item-box:nth-child(${currentPatternIndex + 1})`);
-    
-    if (isEqual) {
-        const colorGreen = "green";
-
-        strItembox.style.backgroundColor = colorGreen;
-        patternItembox.style.backgroundColor = colorGreen;
-
-        await timer(WAIT_TIME / 3);
-    } else {
-        const colorRed = "red";
-        strItembox.style.backgroundColor = colorRed;
-        patternItembox.style.backgroundColor = colorRed;
-
-        await timer(WAIT_TIME / 3);
-
-        resetBackground();
+function paintDomFromStartToEnd(querySelector, startIndex, endIndex, isEqual) {
+    for(let i = startIndex; i <= endIndex; i++) {
+        paintDom(querySelector, i, isEqual);
     }
 }
 
-async function moveDOM(jump) {
+function paintItemContainer(strIndex, patternIndex, isEqual) {
+    paintDom("#strContainer .item-container", strIndex, isEqual);
+    paintDom("#patternContainer .item-container", patternIndex, isEqual);
+}
+
+function paintDom(querySelector, currentIndex, isEqual) {
+    const container = document.querySelector(querySelector);
+
+    if (!container) {
+        return;
+    }
+
+    const itemBox = container.querySelector(`.item-box:nth-child(${currentIndex + 1})`);
+    
+    if (!itemBox) {
+        return;
+    }
+
+    if (isEqual) {
+        itemBox.style.backgroundColor = "green";
+    } else {
+        itemBox.style.backgroundColor = "red";
+    }
+}
+
+function moveDom(jump) {
     const patternItemContainer = document.querySelector("#patternContainer .item-container");
 
     if (!patternItemContainer) {
@@ -248,17 +271,16 @@ async function moveDOM(jump) {
     }
 
     patternItemContainer.style.marginLeft = `${100 * jump}px`;
-    await timer(WAIT_TIME / 3);
 }
 
 function setOperation(text) {
-    const operationDOM = document.getElementById("operation");
-    operationDOM.textContent = text;
+    const operation = document.getElementById("operation");
+    operation.textContent = text;
 }
 
-function setResult(result) {
-    const resultDOM = document.getElementById("result");
-    resultDOM.textContent = result;
+function setResult(text) {
+    const result = document.getElementById("result");
+    result.textContent = text;
 }
 
 function getResult(result) {
@@ -269,16 +291,22 @@ function getResult(result) {
     return "Not Found";
 }
 
-function resetBackground() {
-    const strItemboxes = document.querySelectorAll('#strContainer .item-box');
-    const patternItemboxes = document.querySelectorAll('#patternContainer .item-box');
+function resetBackground(containerQuery, startIndex, endIndex) {
+    const containers = document.querySelectorAll(containerQuery);
 
-    if (!strItemboxes || !patternItemboxes) {
+    if (!containers?.length) {
         return;
     }
 
-    strItemboxes.forEach(p => p.style.backgroundColor = "");
-    patternItemboxes.forEach(p => p.style.backgroundColor = "");
+    const validateIndex = (index) => {
+        return startIndex <= index && index <= endIndex
+    }
+
+    containers.forEach((p, index) => {
+        if (validateIndex(index)) {
+            p.style.backgroundColor = "";
+        }
+    });
 }
 
 function resetMargin() {
